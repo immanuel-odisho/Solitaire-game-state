@@ -1,0 +1,491 @@
+\documentclass[12pt]{article}
+
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{hhline}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{makecell}
+
+
+\oddsidemargin 0mm
+\evensidemargin 0mm
+\textwidth 160mm
+\textheight 200mm
+\renewcommand\baselinestretch{1.0}
+
+\pagestyle {plain}
+\pagenumbering{arabic}
+
+\newcounter{stepnum}
+
+
+\usepackage{color}
+
+\title{Assignment 4, Specification}
+\author{SFWR ENG 2AA4 - Immanuel Odisho \\ 400074199}
+
+\begin {document}
+
+\maketitle
+
+The purpose of this software design is to store the state of a game of Freecell.  This
+document shows the specification for the design.\footnote{"This specification file used SFWRENG 2AA4 A3 2018 specifications as a template"}
+
+
+
+
+\newpage
+
+\section* {Card Types Module}
+
+\subsection*{Module}
+
+CardTypes
+
+\subsection* {Uses}
+
+N/A
+
+\subsection* {Syntax}
+
+\subsubsection* {Exported Constants}
+
+None
+
+\subsubsection* {Exported Types}
+
+SuitT = \{club,diamond,heart,spade\} \\
+RankT = \{ace,two,three,four,five,six,seven,eight,nine,ten,jack,queen,king\} \\
+ColourT = \{black,red\}
+
+\subsubsection* {Exported Access Programs}
+
+None
+
+\subsection* {Semantics}
+
+\subsubsection* {State Variables}
+
+None
+
+\subsubsection* {State Invariant}
+
+None
+
+\newpage
+
+\section* {CardADT Module}
+
+\subsection*{Template Module}
+
+CardT
+
+\subsection* {Uses}
+
+CardTypes
+
+\subsection* {Syntax}
+
+\subsubsection* {Exported Types}
+
+CardT = ?
+
+\subsubsection* {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+CardT & RankT, SuitT & CardT &\\
+\hline
+getRank & & RankT&\\
+\hline
+getSuit & & SuitT&\\
+\hline
+getColour & & ColourT&\\
+\hline
+\end{tabular}
+
+\subsection* {Semantics}
+
+\subsubsection* {State Variables}
+
+$rank$: RankT\\ 
+$suit$: SuitT\\
+$colour$: ColourT
+
+\subsubsection* {State Invariant}
+
+None
+
+\subsubsection* {Assumptions}
+
+The constructor CardT is called for each object instance before any other
+access routine is called for that object.  The constructor cannot be called on
+an existing object.
+
+\subsubsection* {Access Routine Semantics}
+
+CardT($r, s$):
+\begin{itemize}
+\item transition: $rank, suit, colour:= r, s, suit = spade \Rightarrow black | suit = club \Rightarrow black | True \Rightarrow red$
+\item output: $out := \mathit{self}$
+\item exception: None
+\end{itemize}
+
+\noindent getRank():
+\begin{itemize}
+\item output: $out := rank$
+\item exception: None
+\end{itemize}
+
+\noindent getSuit():
+\begin{itemize}
+\item output: $out := suit$
+\item exception: None
+\end{itemize}
+
+\noindent getColour():
+\begin{itemize}
+\item output: $out := colour$
+\item exception: noindent
+\end{itemize}
+
+
+\newpage
+
+\section* {Deck ADT Module}
+
+\subsection*{Template Module}
+
+DeckT
+
+\subsection* {Uses}
+
+CardTypes \\
+CardT
+
+\subsection* {Syntax}
+
+\subsubsection* {Exported Types}
+
+CardT = ?
+
+\subsubsection* {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+DeckT &  & DeckT &\\
+\hline
+getDeck & & seq of CardT&\\
+\hline
+getRandDeck & & seq of CardT&\\
+\hline
+size & & $\mathbb{N}$&\\
+\hline
+\end{tabular}
+
+\subsection* {Semantics}
+
+\subsubsection* {State Variables}
+
+$deck$: seq of CardT\\ 
+
+\subsubsection* {State Invariant}
+
+None
+
+\subsubsection* {Assumptions}
+
+The constructor DeckT is called for each object instance before any other
+access routine is called for that object.  The constructor cannot be called on
+an existing object.
+
+\subsubsection* {Access Routine Semantics}
+
+DeckT():
+\begin{itemize}
+\item transition: $\forall(r : RankT | r \in RankT : \forall (s : SuitT | s \in SuitT : deck || <CardT(r,s)>))$
+\item output: $out := \mathit{self}$
+\item exception: None
+\end{itemize}
+
+\noindent getDeck():
+\begin{itemize}
+\item output: $out := deck$
+\item exception: None
+\end{itemize}
+
+\noindent getRandDeck():
+\begin{itemize} 
+\item transition: $\forall (i : \mathbb{N} | i \in [0..99] : swap(randInt(),randInt())$ 
+\item output: $out := deck$
+\item exception: None
+\end{itemize}
+
+\noindent size():
+\begin{itemize}
+\item output: $out := |deck|$
+\item exception: noindent
+\end{itemize} 
+
+\subsection* {Local Functions}
+
+\noindent swap: $\mathbb{N} \times \mathbb{N}$  $\rightarrow$ \textit{NULL} \\
+\noindent swap(a,b) \\
+$\equiv$ deck[a],deck[b] := deck[b],deck[a] \\ 
+
+\noindent randInt: \textit{NULL} $\rightarrow \mathbb{N}$  \\
+\noindent randInt() \\
+$\equiv$ return a random integer within the range [0..51]
+
+\newpage
+
+\section* {Game State Module}
+
+\subsection*{Template Module}
+
+GameState
+
+\subsection* {Uses}
+
+CardTypes \\
+CardTypes\\
+DeckT
+
+\subsection* {Syntax}
+
+\subsubsection* {Exported Types}
+
+GameState = ?
+
+\subsubsection* {Exported Access Programs \footnote{although the methods are not as general as they could be, this was intentionally done so that the interface would be much more easier to use and increase useability, the same can be said about minimalism}}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+GameState &  DeckT & GameState & wrong\_size\_Deck\\
+\hline
+cardInTab & $\mathbb{Z}$, CardT & $\mathbb{B}$ &  invalid\_argument\\
+\hline
+numEmptySpots & & $\mathbb{N}$&\\
+\hline
+TabtoFree & $\mathbb{Z}$, $\mathbb{Z}$ & &\makecell{invalid\_argument \\ invalid\_move \\ full\_cells}\\
+\hline
+FreetoTab & $\mathbb{Z}$, $\mathbb{Z}$ & &\makecell{invalid\_argument \\ invalid\_move  }\\
+\hline
+TabtoFound & $\mathbb{Z}$, $\mathbb{Z}$ & &\makecell{invalid\_argument \\ invalid\_move}\\
+\hline
+FreetoFound & $\mathbb{Z}$, $\mathbb{Z}$ & &\makecell{invalid\_argument \\ invalid\_move }\\
+\hline
+TabtoTab & $\mathbb{Z}$, $\mathbb{Z}$ & &\makecell{invalid\_argument \\ invalid\_move}\\
+\hline
+getFreeCell & $\mathbb{Z}$ & CardT & \makecell{invalid\_argument \\ empty\_cell}\\
+\hline
+viewTab & $\mathbb{Z}$ & seq of CardT & \makecell{invalid\_argument \\ empty\_cell}\\
+\hline
+getTopFound & $\mathbb{Z}$ & CardT & \makecell{invalid\_argument \\ empty\_cell}\\
+\hline
+getTopTab & $\mathbb{Z}$ & CardT & \makecell{invalid\_argument \\ empty\_cell}\\
+\hline
+validMovesRem & &$\mathbb{B}$ &\\ 
+\hline
+winCondition & & $\mathbb{B}$ &\\
+\hline
+\end{tabular}
+
+\subsection* {Semantics}
+
+\subsubsection* {State Variables}
+
+$cards$: seq of CardT\\
+$tableaus$: seq of (seq of CardT) \\ 
+$freecells$: seq of (seq of CardT) \\ 
+$foundations$:  seq of (seq of CardT) \\
+
+\subsubsection* {State Invariant}
+
+$|freecells|$ = 4 \\
+$\forall(i : \mathbb{N} | i \in [0..3]: |freecells[i]| \le 1)$ \\
+$|tableaus|$ = 8 \\
+$|foundations|$ = 4
+
+\subsubsection* {Assumptions}
+
+The constructor GameState is called for each object instance before any other
+access routine is called for that object.  The constructor cannot be called on
+an existing object.
+
+\subsubsection* {Access Routine Semantics}
+
+GameState(deck):
+\begin{itemize}
+\item transition: cards := deck
+\item output: $out := \mathit{self}$
+\item exception: None
+\end{itemize}
+
+\noindent cardInTab(t,c):
+\begin{itemize}
+\item output: $out := \exists(card:CardT|card \in tableaus[t] : c.getRank() = card.getRank() \wedge c.getSuit() = card.getSuit())$
+\item exception: $\neg( 0 \le t \le 7) \Rightarrow invalid\_argument$
+\end{itemize}
+
+\noindent numEmptySpots():
+\begin{itemize}
+\item output: $out := (+(i:\mathbb{N}|i \in [0..|freecells|-1]:|freecells[i]| = 0 \Rightarrow 1)) +  (+(i:\mathbb{N}|i \in [0..|tableaus|-1]:|tableaus[i]| = 0 \Rightarrow 1))$
+\item exception: None
+\end{itemize}
+
+\noindent TabtoFree(t,f):
+\begin{itemize}
+\item transition: $freecells[f], tableaus[t] :=  freecells[f]$ $||$ $tableaus[t][|tableaus[t]|-1]$ , $tableaus[t][0..|tableaus[t]|-2]$
+\item exception: $|freecells[f]| != 0 \Rightarrow invalid\_move$ $|$  $|tableaus[t]| = 0 \Rightarrow invalid\_move$ $|$ $\neg( 0 \le t \le 7) \Rightarrow invalid\_argument$ $|$ $\neg( 0 \le f \le 3) \Rightarrow invalid\_argument$ $|$ $\neg((\exists(i : \mathbb{N} | i \in [0..3]: |freecells| = 0))) \Rightarrow full\_cells$
+\end{itemize} 
+
+
+\noindent FreetoTab(f,t):
+\begin{itemize}
+\item transition: $tableaus[t], freecells[f] :=  tableaus[t]$ $||$ $freecells[f][0]$ , $freecells[f][0:0]$
+\item exception: $\neg(validMovefT(f,t) \Rightarrow invalid\_move$ $|$ $\neg( 0 \le t \le 7) \Rightarrow invalid\_argument$ $|$ $\neg( 0 \le f \le 3) \Rightarrow invalid\_argument$
+\end{itemize}
+
+
+\noindent TabtoFound(t,F):
+\begin{itemize}
+\item transition: $foundations[F], tableaus[t] := foundations[F]$ $||$ $tableaus[t][|tableaus[t]|-1]$ , $tableaus[t][|tableaus[t]|-2]$
+\item exception: $\neg(validMovetF(t,F) \Rightarrow invalid\_move$ $|$ $\neg( 0 \le F \le 3) \Rightarrow invalid\_argument$ $|$ $\neg( 0 \le t \le 7) \Rightarrow invalid\_argument$
+\end{itemize} 
+
+\noindent FreetoFound(f,F):
+\begin{itemize}
+\item transition: $foundations[F], freecells[f] := foundations[F]$ $||$ $freecells[f][0]$ , $freecells[f][0:0]$
+\item exception: $\neg(validMovefF(f,F) \Rightarrow invalid\_move$ $|$ $\neg( 0 \le F \le 3) \Rightarrow invalid\_argument$ $|$ $\neg( 0 \le f \le 3) \Rightarrow invalid\_argument$
+\end{itemize} 
+
+\noindent TabtoTab(t,T):
+\begin{itemize}
+\item transition: $tableaus[T], tableaus[t] :=  tableaus[T]$ $||$ $tableaus[t][|tableaus[t]|-1]$ , $tableaus[t][|tableaus[t]|-1]$
+\item exception: $\neg(validMovetT(t,T) \Rightarrow invalid\_move$ $|$ $\neg( 0 \le t \le 7) \Rightarrow invalid\_argument$ $|$ $\neg( 0 \le T \le 7) \Rightarrow invalid\_argument$
+\end{itemize}
+
+\noindent getFreecell(i):
+\begin{itemize}
+\item output: $out := freecells[i][0]$
+\item exception: $\neg( 0 \le i \le 3) \Rightarrow invalid\_argument$ $|$ $|freecells[i]| = 0 \Rightarrow empty\_cell$ 
+\end{itemize}
+
+\noindent viewTab(i):
+\begin{itemize}
+\item output: $out := tableaus[i]$
+\item exception: $\neg( 0 \le i \le 7) \Rightarrow invalid\_argument$ $|$ $|tableaus[i]| = 0 \Rightarrow empty\_cell$ 
+\end{itemize}
+
+\noindent getTopFound(i):
+\begin{itemize}
+\item output: $out := foundations[i][|foundations[i]|-1]$
+\item exception: $\neg( 0 \le i \le 3) \Rightarrow invalid\_argument$ $|$ $|foundations[i]| = 0 \Rightarrow empty\_cell$ 
+\end{itemize}
+
+\noindent getTopTab(i):
+\begin{itemize}
+\item output: $out := tableaus[i][|tableaus[i]|-1]$
+\item exception: None 
+\end{itemize}
+
+\noindent validMovesRem():
+\begin{itemize}
+\item output: $out := (\exists(i,j:\mathbb{N} | i \in [0..7],j \in [0..3] : validMovetF(i,j))) \vee (\exists(i,j:\mathbb{N} | i \in [0..3],j \in [0..3] : validMovefF(i,j))) \vee (\exists(i,j:\mathbb{N} | i \in [0..3],j \in [0..7] : validMovefT(i,j))) \vee (\exists(i,j:\mathbb{N} | i \in [0..7],j \in [0..7] : validMovetT(i,j))) $
+\item exception: None 
+\end{itemize}
+
+\noindent winCondition():
+\begin{itemize}
+\item output: $\forall(i : \mathbb{N} | i \in [0..3] : (inOrder(foundation[i]))$
+\item exception: $\neg( 0 \le i \le 7) \Rightarrow invalid\_argument$ $|$ $|tableaus[i]| = 0 \Rightarrow empty\_cell$ 
+\end{itemize}
+
+\subsection* {Local Functions}
+
+\noindent validMovefF: $\mathbb{Z} \times \mathbb{Z} \rightarrow \mathbb{B}$ \\
+\noindent validMovefF(f,F) 
+\medskip
+
+\noindent $\equiv$ $|freecells[f]| = 0 \Rightarrow False$ $|$  \\ $(|foundations[F]| = 0 \wedge freecells[f][0].getRank() != ace \Rightarrow False)$ $|$ \\ $\neg((freecells[f][0].getSuit() = foundations[F][|foundations[F]| -1].getSuit()) \wedge \\ (getVal(freecells[f][0]) + 1 = getVal(foundations[F][|foundations[F]| -1]) \Rightarrow False$ $|$ \\ True \\
+
+\medskip
+\medskip
+
+\noindent validMovefT: $\mathbb{Z} \times \mathbb{Z} \rightarrow \mathbb{B}$ \\
+\noindent validMovefT(f,t) \\ \\
+$\equiv$ $|freecells[f]| = 0 \Rightarrow False$ $|$  \\ $(|tableaus[t]| = 0 \Rightarrow True)$\\ $\neg(\neg(freecells[f][0].getColour() = tableaus[F][|tableaus[F]| -1].getColour()) \wedge \\ (getVal(freecells[f][0]) -1 = getVal(tableaus[F][|tableaus[F]| -1]))) \Rightarrow False$  $|$ True \\
+
+\medskip
+\medskip
+
+\noindent validMovetF: $\mathbb{Z} \times \mathbb{Z} \rightarrow \mathbb{B}$ \\
+\noindent validMovetF(t,F) 
+\medskip
+
+\noindent $\equiv$ $|tableaus[f]| = 0 \Rightarrow False$ $|$  \\ $(|foundations[F]| = 0 \wedge tableaus[f][|tableaus[f]|-1].getRank() != ace \Rightarrow False)$ $|$ \\ $\neg((tableaus[f][|tableaus[f]|-1].getSuit() = foundations[F][|foundations[F]| -1].getSuit()) \wedge (getVal(tableaus[f][|tableaus[f]|-1]) + 1 = getVal(foundations[F][|foundations[F]| -1]))) \Rightarrow False$ $|$ \\ True \\
+
+\medskip
+\medskip
+
+\noindent validMovetT: $\mathbb{Z} \times \mathbb{Z} \rightarrow \mathbb{B}$ \\
+\noindent validMovetT(t,T) \\ \\
+$\equiv$ $|tableaus[t]| = 0 \Rightarrow False$ $|$  $(|tableaus[T]| = 0 \Rightarrow True)$ $|$ \\ $\neg(\neg(tableaus[t][|tableaus[t]|-1].getColour() = tableaus[t][|tableaus[t]| -1].getColour()) \wedge \\ (getVal(tableaus[t][|tableaus[t]|-1]) - 1 = getVal(tableaus[T][|tableaus[T]| -1]))) \Rightarrow False$ $|$ True \\
+
+\medskip
+\medskip
+
+\noindent inOrder: seq of CardT $\rightarrow \mathbb{B}$ \\
+\noindent inOrder(cards) \\ \\
+$\equiv$ $\neg(|cards| = 13) \Rightarrow False$ $|$  $\forall(i : \mathbb{N} | i \in [0..11] : (cards[i].getSuit() = cards[i+1].getSuit()) \wedge (getVal(cards[i]) + 1 = getVal(cards[i+1])))$\\
+
+\medskip
+\medskip
+
+\noindent getVal: CardT $\rightarrow$ $\mathbb{N}$ \\
+\noindent getVal(c) $\equiv$ \\
+
+\medskip
+
+\begin{tabular}{|l|l|}
+\hline
+$c.getRank() = ace$ & 1\\
+\hline
+$c.getRank() = two$ & 2\\
+\hline
+$c.getRank() = three$ & 3\\
+\hline
+$c.getRank() = four$ & 4\\
+\hline
+$c.getRank() = five$ & 5\\
+\hline
+$c.getRank() = six$ & 6\\
+\hline
+$c.getRank() = seven$ & 7\\
+\hline
+$c.getRank() = eight$ & 8\\
+\hline
+$c.getRank() = nine$ & 9\\
+\hline
+$c.getRank() = ten$ & 10\\
+\hline
+$c.getRank() = jack$ & 11\\
+\hline
+$c.getRank() = queen$ & 12\\
+\hline
+$c.getRank() = king$ & 13\\
+\hline
+\end{tabular}
+
+\end {document}
